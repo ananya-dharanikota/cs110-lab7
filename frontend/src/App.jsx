@@ -1,24 +1,38 @@
-import React from 'react';
-import ReactDOM from 'react-dom/client';
-import {BrowserRouter,Routes,Route} from 'react-router-dom';
+import './index.css'
+import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom'
+import { useState, useEffect } from 'react'
+import { getMe } from './api'
+import Auth from './pages/Auth'
+import Home from './pages/Home'
+import Room from './pages/Room'
 
-import Login from './Login';
-import Signup from './Signup';
-import Home from './Home';
-import Room from './Room';
-import './style.css';
+/**
+ * Root application component. Manages auth state and routing.
+ */
+export default function App() {
+  const [user, setUser] = useState(null)
+  const [loading, setLoading] = useState(true)
 
-ReactDOM.createRoot(
-  document.getElementById('root')
-).render(
+  useEffect(() => {
+    getMe().then(data => {
+      if (data.loggedIn) setUser(data.username)
+      setLoading(false)
+    })
+  }, [])
 
-  <BrowserRouter>
-    <Routes>
-      <Route path="/" element={<Login />}/>
-      <Route path="/signup" element={<Signup />} />
-      <Route path="/home" element={<Home />} />
-      <Route path="/room/:roomId" element={<Room />}/>
-    </Routes>
-  </BrowserRouter>
+  if (loading) return (
+    <div style={{ display:'flex', alignItems:'center', justifyContent:'center', height:'100vh', color:'var(--text3)', fontFamily:'var(--font-display)', fontSize:'13px', letterSpacing:'0.1em' }}>
+      LOADING...
+    </div>
+  )
 
-);
+  return (
+    <BrowserRouter>
+      <Routes>
+        <Route path="/auth" element={user ? <Navigate to="/" /> : <Auth onLogin={setUser} />} />
+        <Route path="/" element={user ? <Home user={user} onLogout={() => setUser(null)} /> : <Navigate to="/auth" />} />
+        <Route path="/:roomId" element={user ? <Room user={user} onLogout={() => setUser(null)} /> : <Navigate to="/auth" />} />
+      </Routes>
+    </BrowserRouter>
+  )
+}
