@@ -1,7 +1,8 @@
 const mongoose = require('mongoose');
 
 const RoomSchema = new mongoose.Schema({
-  roomId: String
-});
+  roomId: { type: String, required: true, unique: true },
+  name: { type: String, default: '' },
+}, { timestamps: true });
 
-module.exports = mongoose.model('Room',RoomSchema);
+module.exports = mongoose.model('Room', RoomSchema);

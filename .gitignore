@@ -1,1 +1,24 @@
-node_modules
+# node_modules
+# vite.config.js
+# package-lock.json
+# package.json
+# .env
+# .env_example
+# .env.example
+
+# Dependencies
+node_modules/
+
+# Environment variables (never commit these)
+.env
+
+# Vite build output
+frontend/dist/
+
+# Logs
+npm-debug.log*
+nodemon-debug.log*
+
+# OS files
+.DS_Store
+Thumbs.db
